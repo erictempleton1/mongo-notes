@@ -38,3 +38,19 @@ print 'Cities in MD with population less than or equal to 100:'
 for city in md_100:
 	print city
 
+# $and operator for 100 to 500 pop cities in MD
+md_100_500 = db.locations.find(
+	{
+    'state': 'MD',
+    '$and':
+        [
+         {'pop': {'$gte': 100}},
+         {'pop': {'$lte': 500}}
+        ] 
+    })
+# prints count of cities with 100 to 500 pop
+print '{0} cities in MD with a population of 100 to 500'.format(md_100_500.count())
+
+# prints first 5 cities descending by pop size
+for city in md_100_500.sort('pop', -1).limit(5):
+	print city
