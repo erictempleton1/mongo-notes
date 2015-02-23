@@ -73,7 +73,7 @@ lg_sm_pop =  db.locations.aggregate([
     }
 ])
 
-# same as above but added sort desc by pop
+# same as above but sorts desc by pop
 lg_sm_pop_desc = db.locations.aggregate([
     {'$group':
         {'_id': {'state': '$state', 'city': '$city'},
