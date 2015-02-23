@@ -54,3 +54,9 @@ print '{0} cities in MD with a population of 100 to 500'.format(md_100_500.count
 # prints first 5 cities descending by pop size
 for city in md_100_500.sort('pop', -1).limit(5):
 	print city
+
+avg_pop_md = db.locations.aggregate([ {'$group': {'_id': {'state': '$state', 'city': '$city'}, 'pop': {'$sum': '$pop'} } },
+	                                   {'$group': {'$_id.state', 'avgCityPop': {'$avg': '$pop'} } }
+	                                ])
+for x in avg_pop_md:
+	print x
