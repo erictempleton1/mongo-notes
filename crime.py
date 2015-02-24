@@ -34,4 +34,20 @@ dist_sum_crime = db.crime.aggregate([
 	{'$sort': {'count': -1}}
 ])
 
+print db.crime.aggregate([
+    {'$match':
+        {'District': {'$in':
+            ['NORTHEASTERN', 'WESTERN']
+            }
+        }
+    },
+    {'$group':
+        {'_id': {'Description': '$Description'},
+            'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}}
+])
+
+
 
