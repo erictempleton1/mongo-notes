@@ -34,7 +34,8 @@ dist_sum_crime = db.crime.aggregate([
 	{'$sort': {'count': -1}}
 ])
 
-print db.crime.aggregate([
+# returns crime sums from districts in the list
+crime_sum_dist = db.crime.aggregate([
     {'$match':
         {'District': {'$in':
             ['NORTHEASTERN', 'WESTERN']
@@ -49,5 +50,31 @@ print db.crime.aggregate([
     {'$sort': {'count': -1}}
 ])
 
+# top 20 highest crime days sorted desc
+crime_date_20 = db.crime.aggregate([
+	{'$group':
+	    {'_id': '$CrimeDate',
+	        'count': {'$sum': 1}
+	    }
+	},
+	{'$sort': {'count': -1}},
+	{'$limit': 20}
+])
 
-
+# returns highest and lowest crime dates
+crime_date_high_low = db. crime.aggregate([
+	{'$group':
+	    {'_id': {'CrimeDate': '$CrimeDate'},
+	        'count': {'$sum': 1}
+	    }
+	},
+	{'$sort': {'count': -1}},
+	{'$group':
+	    {'_id': 'CrimeDate',
+	     'higest_date': {'$first': '$_id.CrimeDate'},
+	     'highest_count': {'$first': '$count'},
+	     'lowest_date': {'$last': '$_id.CrimeDate'},
+	     'lowest_count': {'$last': '$count'}
+	    }
+	}
+])
