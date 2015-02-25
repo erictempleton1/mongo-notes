@@ -1,3 +1,6 @@
+# Baltimore crime data set
+# https://data.baltimorecity.gov/Public-Safety/BPD-Part-1-Victim-Based-Crime-Data/wsfq-mvij
+
 from pymongo import MongoClient
 
 client = MongoClient()
