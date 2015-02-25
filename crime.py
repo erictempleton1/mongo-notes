@@ -62,7 +62,7 @@ crime_date_20 = db.crime.aggregate([
 ])
 
 # returns highest and lowest crime dates
-crime_date_high_low = db. crime.aggregate([
+crime_date_high_low = db.crime.aggregate([
 	{'$group':
 	    {'_id': {'CrimeDate': '$CrimeDate'},
 	        'count': {'$sum': 1}
@@ -77,4 +77,28 @@ crime_date_high_low = db. crime.aggregate([
 	     'lowest_count': {'$last': '$count'}
 	    }
 	}
+])
+
+# returns avg number of crimes per day
+avg_day = db.crime.aggregate([
+	{'$group':
+	    {'_id': '$CrimeDate',
+	     'count': {'$sum': 1}
+	    }
+	},
+	{'$group':
+	    {'_id': '',
+	     'avg_crime': {'$avg': '$count'}
+	    }
+	}
+])
+
+# returns count of each weapon used sorted desc
+weapon_count = db.crime.aggregate([
+    {'$group':
+        {'_id': '$Weapon',
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}},
 ])
