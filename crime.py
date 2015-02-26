@@ -2,6 +2,7 @@
 # https://data.baltimorecity.gov/Public-Safety/BPD-Part-1-Victim-Based-Crime-Data/wsfq-mvij
 
 from pymongo import MongoClient
+import json
 
 client = MongoClient()
 db = client['bmore_crime']
@@ -105,3 +106,20 @@ weapon_count = db.crime.aggregate([
     },
     {'$sort': {'count': -1}},
 ])
+
+# returns sorted desc count of common weapons used in given crime
+crime_weapon = db.crime.aggregate([
+	{'$match':
+	    {'Description': 'ROBBERY - STREET'}
+	},
+	{'$group':
+	    {'_id': {'Weapon': '$Weapon'},
+	        'count': {'$sum': 1}
+	    }
+	},
+	{'$sort': {'count': -1}},
+])
+
+
+# sub in var for nice format json print
+print json.dumps(crime_weapon, indent=4)
