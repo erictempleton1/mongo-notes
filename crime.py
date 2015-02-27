@@ -120,6 +120,22 @@ crime_weapon = db.crime.aggregate([
 	{'$sort': {'count': -1}},
 ])
 
+# average crimes per day with a firearm
+avg_firearm = db.crime.aggregate([
+	{'$match':
+	    {'Weapon': 'FIREARM'}
+	},
+	{'$group':
+	    {'_id': '$CrimeDate',
+	     'count': {'$sum': 1}
+	    }
+	},
+	{'$group':
+	    {'_id': '',
+	     'avg per day': {'$avg': '$count'}
+	    }
+	}
+])
 
 # sub in var for nice format json print
-print json.dumps(crime_weapon, indent=4)
+print json.dumps(avg_firearm, indent=4)
