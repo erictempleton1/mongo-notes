@@ -137,5 +137,19 @@ avg_firearm = db.crime.aggregate([
 	}
 ])
 
+# average crimes per day all weapons
+avg_all_weapons = db.crime.aggregate([
+    {'$group':
+        {'_id': {'CrimeDate': '$CrimeDate', 'Weapon': '$Weapon'},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$group':
+        {'_id': '$_id.Weapon',
+         'avg per day': {'$avg': '$count'}
+        }
+    }
+])
+
 # sub in var for nice format json print
-print json.dumps(avg_firearm, indent=4)
+print json.dumps(avg_all_weapons, indent=4)
