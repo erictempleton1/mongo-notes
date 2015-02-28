@@ -7,6 +7,7 @@ import json
 client = MongoClient()
 db = client['bmore_crime']
 
+"""
 # sum of crimes by district
 # sorted desc, but includes neighborhoods
 sum_district = db.crime.aggregate([
@@ -136,6 +137,7 @@ avg_firearm = db.crime.aggregate([
 	    }
 	}
 ])
+"""
 
 # average crimes per day all weapons
 avg_all_weapons = db.crime.aggregate([
