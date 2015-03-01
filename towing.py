@@ -37,6 +37,17 @@ car_tag = db.tows.aggregate([
 	{'$sort': {'count': -1}},
 	{'$limit': 10}
 ])
+
+# most common tow locations
+tow_place = db.tows.aggregate([
+    {'$group':
+        {'_id': {'Tow place': '$towedFromLocation'},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}},
+    {'$limit': 10}
+])
 """
 
-print json.dumps(car_tag, indent=4)
+print json.dumps(tow_place, indent=4)
