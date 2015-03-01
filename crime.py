@@ -137,7 +137,7 @@ avg_firearm = db.crime.aggregate([
 	    }
 	}
 ])
-"""
+
 
 # average crimes per day all weapons
 avg_all_weapons = db.crime.aggregate([
@@ -153,5 +153,80 @@ avg_all_weapons = db.crime.aggregate([
     }
 ])
 
+
+# returns avg crime per day per district
+# limits to top 10 districts
+avg_per_district = db.crime.aggregate([
+    {'$group':
+        {'_id': {'CrimeDate': '$CrimeDate', 'District': '$District'},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$group':
+        {'_id': '$_id.District',
+         'avg crimes per day': {'$avg': '$count'}
+        }
+    },
+    {'$sort': {'avg crimes per day': -1}},
+    {'$limit': 10}
+])
+
+# returns avg per location
+# data contains many duplicates which skews results
+# the below lead me to find the duplicates
+avg_per_location = db.crime.aggregate([
+	{'$group':
+	    {'_id': {'Location': '$Location', 'CrimeDate': '$CrimeDate'},
+	     'count': {'$sum': 1}
+	    }
+	},
+	{'$group':
+	    {'_id': '$_id.Location',
+	     'avg crimes per day': {'$avg': '$count'}
+	    }
+	},
+	{'$sort': {'avg crimes per day': -1}},
+	{'$limit': 10}
+])
+
+total_per_location = db.crime.aggregate([
+    {'$group':
+        {'_id': '$Location',
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}},
+    {'$limit': 10}
+])
+
+avg_per_hotel = db.crime.aggregate([
+    {'$match':
+        {'Location': '900 N BRUCE ST'}
+    },
+    {'$group':
+        {'_id': '$CrimeDate',
+         'count': {'$sum': 1}
+        }
+    },
+    {'$group':
+        {'_id': '',
+         'sum': {'$sum': '$count'},
+         'avg': {'$avg': '$count'}
+        }
+    }
+])
+
+avg_high = db.crime.aggregate([
+	{'$match':
+	    {'Location': '900 N BRUCE ST'}
+	},
+	{'$group':
+	    {'_id': '$CrimeDate',
+	     'count': {'$sum': 1}
+	    }
+	}
+])
+"""
+
 # sub in var for nice format json print
-print json.dumps(avg_all_weapons, indent=4)
+print json.dumps(avg_high, indent=4)
