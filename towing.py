@@ -63,6 +63,45 @@ avg_tows = db.tows.aggregate([
 	    }
 	}
 ])
+
+# tows per year
+year_totals = db.tows.aggregate([
+	{'$group':
+	    {'_id': {'year': {'$year': '$towedDateTime'}},
+	     'count': {'$sum': 1}
+	    }
+	},
+	{'$sort': {'count': -1}}
+])
+
+# tows per month sorted desc
+months = db.tows.aggregate([
+	{'$group':
+	    {'_id': {'month': {'$month': '$towedDateTime'}},
+	     'count': {'$sum': 1}
+	    }
+	},
+	{'$sort': {'count': -1}}
+])
 """
 
-print json.dumps(avg_tows, indent=4)
+# tows per day of the month sorted desc
+days = db.tows.aggregate([
+	{'$group':
+	    {'_id': {'day': {'$dayOfMonth': '$towedDateTime'}},
+	     'count': {'$sum': 1}
+	    }
+	},
+	{'$sort': {'count': -1}}
+])
+
+day_of_week = db.tows.aggregate([
+    {'$group':
+        {'_id': {'day of week': {'$dayOfWeek': '$towedDateTime'}},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}}
+])
+
+print json.dumps(day_of_week, indent=4)
