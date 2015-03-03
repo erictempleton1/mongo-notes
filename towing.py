@@ -48,6 +48,21 @@ tow_place = db.tows.aggregate([
     {'$sort': {'count': -1}},
     {'$limit': 10}
 ])
+
+# average tows per day
+# date includes time, so not a good representation
+avg_tows = db.tows.aggregate([
+	{'$group':
+	    {'_id': '$towedDateTime',
+	     'count': {'$sum': 1}
+	    }
+	},
+	{'$group':
+	    {'_id': '',
+	     'avg tows per day': {'$avg': '$count'}
+	    }
+	}
+])
 """
 
-print json.dumps(tow_place, indent=4)
+print json.dumps(avg_tows, indent=4)
