@@ -121,4 +121,18 @@ tows_year = db.tows.aggregate([
 	}
 ])
 
+# most towed day of the week in 2014
+# untested
+dayweek_year = db.tows.aggregate([
+    {'$match':
+        {'towedDateTime': {'$gte': start, '$lte': end}}
+    },
+    {'$group':
+        {'_id': {'day of week': {'$dayOfWeek': '$towedDateTime'}},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}}
+])
+
 print json.dumps(tows_year, indent=4)
