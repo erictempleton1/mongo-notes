@@ -48,3 +48,9 @@ db.locations.distinct('state')
 
 # return a list of all cities in MD in the db
 db.locations.distinct('city', {state: 'MD'})
+
+# convert to ISODate
+> while (cursor.hasNext()) {
+... var doc = cursor.next();
+... db.tows.update({_id: doc._id}, {$set: {towedDateTime: new Date(doc.towedDateTime)}})
+... }

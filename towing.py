@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from datetime import datetime
 import json
 
 client = MongoClient()
@@ -65,7 +66,7 @@ avg_tows = db.tows.aggregate([
 ])
 
 # tows per year
-year_totals = db.tows.aggregate([
+years = db.tows.aggregate([
 	{'$group':
 	    {'_id': {'year': {'$year': '$towedDateTime'}},
 	     'count': {'$sum': 1}
@@ -83,7 +84,7 @@ months = db.tows.aggregate([
 	},
 	{'$sort': {'count': -1}}
 ])
-"""
+
 
 # tows per day of the month sorted desc
 days = db.tows.aggregate([
@@ -95,6 +96,7 @@ days = db.tows.aggregate([
 	{'$sort': {'count': -1}}
 ])
 
+# tows per day of the week sorted desc
 day_of_week = db.tows.aggregate([
     {'$group':
         {'_id': {'day of week': {'$dayOfWeek': '$towedDateTime'}},
@@ -103,5 +105,20 @@ day_of_week = db.tows.aggregate([
     },
     {'$sort': {'count': -1}}
 ])
+"""
 
-print json.dumps(day_of_week, indent=4)
+# uses start date to find count of all tows in 2013 & 2014
+start = datetime(2013, 1, 1, 00, 00, 00)
+end = datetime(2014, 12, 31, 23, 59, 00)
+tows_year = db.tows.aggregate([
+	{'$match': 
+	    {'towedDateTime': {'$gte': start, '$lte': end}}
+	},
+	{'$group':
+	    {'_id': {'year': {'$year': '$towedDateTime'}},
+	     'count': {'$sum': 1}
+	    }
+	}
+])
+
+print json.dumps(tows_year, indent=4)
