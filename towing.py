@@ -105,11 +105,8 @@ day_of_week = db.tows.aggregate([
     },
     {'$sort': {'count': -1}}
 ])
-"""
 
 # uses start date to find count of all tows in 2013 & 2014
-start = datetime(2013, 1, 1, 00, 00, 00)
-end = datetime(2014, 12, 31, 23, 59, 00)
 tows_year = db.tows.aggregate([
 	{'$match': 
 	    {'towedDateTime': {'$gte': start, '$lte': end}}
@@ -134,5 +131,19 @@ dayweek_year = db.tows.aggregate([
     },
     {'$sort': {'count': -1}}
 ])
+"""
 
-print json.dumps(tows_year, indent=4)
+start_2013 = datetime(2013, 1, 1, 00, 00, 00)
+end_2013 = datetime(2013, 12, 31, 23, 59, 00)
+
+month_year = db.tows.aggregate([
+    {'$group':
+        {'_id':
+            {'2013': {'$month': {'$gte': {'towedDateTime': start_2013},
+                                 '$lte': {'towedDateTime': end_2013}}}},
+         'count': {'$sum': 1}
+        }
+    }
+])
+
+print json.dumps(month_year, indent=4)
