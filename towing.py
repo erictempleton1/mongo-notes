@@ -119,7 +119,6 @@ tows_year = db.tows.aggregate([
 ])
 
 # most towed day of the week in 2014
-# untested
 dayweek_year = db.tows.aggregate([
     {'$match':
         {'towedDateTime': {'$gte': start, '$lte': end}}
@@ -131,19 +130,49 @@ dayweek_year = db.tows.aggregate([
     },
     {'$sort': {'count': -1}}
 ])
-"""
 
-start_2013 = datetime(2013, 1, 1, 00, 00, 00)
-end_2013 = datetime(2013, 12, 31, 23, 59, 00)
-
+# both 2013 and 2014 totals by month sorted desc
 month_year = db.tows.aggregate([
-    {'$group':
-        {'_id':
-            {'2013': {'$month': {'$gte': {'towedDateTime': start_2013},
-                                 '$lte': {'towedDateTime': end_2013}}}},
-         'count': {'$sum': 1}
-        }
-    }
+	{'$match':
+	    {'towedDateTime': {'$gte': start, '$lte': end}}
+	},
+	{'$group':
+	    {'_id': {'year': {'$year': '$towedDateTime'}, 'month': {'$month': '$towedDateTime'}},
+	     'count': {'$sum': 1}
+	    }
+	},
+	{'$sort': {'count': -1}}
 ])
 
-print json.dumps(month_year, indent=4)
+# top 10 tow locations in 2014 sorted desc
+location_2014 = db.tows.aggregate([
+	{'$match':
+	    {'towedDateTime': {'$gte': start, '$lte': end}}
+	},
+	{'$group':
+	    {'_id': {'Location': '$towedFromLocation'},
+	     'count': {'$sum': 1}
+	    }
+	},
+	{'$sort': {'count': -1}},
+	{'$limit': 10}
+])
+"""
+
+start = datetime(2014, 1, 1, 00, 00, 00)
+end = datetime(2014, 12, 31, 23, 59, 00)
+
+charge_2014 = db.tows.aggregate([
+    {'$match':
+        {'towedDateTime': {'$gte': start, '$lte': end}}
+    },
+    {'$group':
+        {'_id': {'Charge': '$towCharge'},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}},
+    {'$limit': 10}
+])
+
+print json.dumps(charge_2014, indent=4)
