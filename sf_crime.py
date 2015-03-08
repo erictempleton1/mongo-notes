@@ -9,8 +9,8 @@ import json
 client = MongoClient()
 db = client['sf_crime']
 
-start = datetime(2014, 1, 1, 00, 00, 00)
-end = datetime(2014, 12, 31, 23, 59, 00)
+start = datetime(2013, 1, 1, 00, 00, 00)
+end = datetime(2013, 12, 31, 23, 59, 00)
 
 """
 crimes = db.crimes.aggregate([
@@ -24,7 +24,7 @@ crimes = db.crimes.aggregate([
 
 crimes_2014 = db.crimes.aggregate([
 	{'$match':
-	    {'towedDateTime': {'towedDateTime': {'$gte': start, '$lte': end}}}
+	    {'Date': {'$gte': start, '$lte': end}}
 	},
 	{'$group':
 	    {'_id': {'Crime': '$Category'},
@@ -32,9 +32,18 @@ crimes_2014 = db.crimes.aggregate([
 	    }
 	},
 	{'$sort': {'count': -1}},
-	{'$limit': 10}
+	{'$limit': 5}
 ])
 """
 
-print json.dumps(crimes_2014, indent=4)
+years = db.crimes.aggregate([
+    {'$group':
+        {'_id': {'Year': {'$year': '$Date'}},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}}
+])
+
+print json.dumps(years, indent=4)
 
