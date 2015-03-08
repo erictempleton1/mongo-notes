@@ -21,13 +21,10 @@ crimes = db.crimes.aggregate([
     },
     {'$sort': {'count': -1}}
 ])
-"""
-
-#dateutil.parser.parse(xdate)
 
 crimes_2014 = db.crimes.aggregate([
 	{'$match':
-	    {'towedDateTime': {'$gte': start, '$lte': end}}
+	    {'towedDateTime': {'towedDateTime': {'$gte': start, '$lte': end}}}
 	},
 	{'$group':
 	    {'_id': {'Crime': '$Category'},
@@ -37,6 +34,7 @@ crimes_2014 = db.crimes.aggregate([
 	{'$sort': {'count': -1}},
 	{'$limit': 10}
 ])
+"""
 
 print json.dumps(crimes_2014, indent=4)
 
