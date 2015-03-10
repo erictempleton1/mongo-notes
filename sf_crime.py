@@ -41,7 +41,6 @@ years = db.crimes.aggregate([
     },
     {'$sort': {'count': -1}}
 ])
-"""
 
 start = datetime(2014, 1, 1, 00, 00, 00)
 end = datetime(2014, 12, 31, 23, 59, 00)
@@ -59,12 +58,16 @@ months = db.crimes.aggregate([
     {'$limit': 6}
 ])
 
+# count of larceny crimes in 2014 on Sundays by month
 proj = db.crimes.aggregate([
     {'$match':
-        {'DayOfWeek': 'Wednesday'}
+        {'Date': {'$gte': start, '$lte': end},
+         'DayOfWeek': 'Sunday',
+         'Category': 'LARCENY/THEFT',
+        }
     },
     {'$group':
-        {'_id': {'Crime': '$Category'},
+        {'_id': {'Month': {'$month': '$Date'}},
          'count': {'$sum': 1}
         }
     },
@@ -72,11 +75,16 @@ proj = db.crimes.aggregate([
     {'$limit': 5},
     {'$project':
         {'_id': 0,
-         'Crime Category': '$_id.Crime',
-         'Crime Count': '$count'
+         'Month': '$_id.Month',
+         'Count': '$count'
         }
     },
 ])
+"""
+start = datetime(2014, 1, 1, 00, 00, 00)
+end = datetime(2014, 12, 31, 23, 59, 00)
+
+
 
 print json.dumps(proj, indent=4)
 
