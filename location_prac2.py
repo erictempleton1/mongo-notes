@@ -41,7 +41,7 @@ state_million = db.locations.aggregate([
     }
 ])
 
-# retusn avg city population by state
+# returns avg city population by state
 # creates new val avg_city_pop
 avg_pop = db.locations.aggregate([
 	{'$group':
