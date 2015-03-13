@@ -80,7 +80,7 @@ proj = db.crimes.aggregate([
         }
     },
 ])
-"""
+
 start = datetime(2014, 1, 1, 00, 00, 00)
 end = datetime(2014, 12, 31, 23, 59, 00)
 
@@ -102,6 +102,48 @@ proj2 = db.crimes.aggregate([
     }
 ])
 
+dist_crime = db.crimes.aggregate([
+    {'$match':
+        {'Date': {'$gte': start, '$lte': end}}
+    },
+    {'$group':
+        {'_id': {'District': '$PdDistrict'},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}},
+    {'$limit': 10},
+    {'$project':
+        {'_id': 0,
+         'District': '$_id.District',
+         'Crime Count': '$count'
+        }
+    }
+])
+"""
 
-print json.dumps(proj2, indent=4)
+start = datetime(2014, 1, 1, 00, 00, 00)
+end = datetime(2014, 12, 31, 23, 59, 00)
+
+dist_crime2 = db.crimes.aggregate([
+    {'$match':
+        {'Date': {'$gte': start, '$lte': end}}
+    },
+    {'$group':
+        {'_id': {'District': '$PdDistrict'},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1}},
+    {'$group':
+        {'_id': '',
+         'Highest Crime District': {'$first': '$_id.District'},
+         'Crimes': {'$first': '$count'},
+         'Lowest Crime District': {'$last': '$_id.District'},
+         'Crimes': {'$last': '$count'}
+        }
+    }
+])
+
+print json.dumps(dist_crime2, indent=4)
 
