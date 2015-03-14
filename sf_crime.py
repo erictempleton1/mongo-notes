@@ -125,25 +125,18 @@ dist_crime = db.crimes.aggregate([
 start = datetime(2014, 1, 1, 00, 00, 00)
 end = datetime(2014, 12, 31, 23, 59, 00)
 
-dist_crime2 = db.crimes.aggregate([
+per_day = db.crimes.aggregate([
     {'$match':
         {'Date': {'$gte': start, '$lte': end}}
     },
     {'$group':
-        {'_id': {'District': '$PdDistrict'},
+        {'_id': {'Day of Year': {'Date': {'$dayOfYear': '$Date'}}},
          'count': {'$sum': 1}
         }
     },
     {'$sort': {'count': -1}},
-    {'$group':
-        {'_id': '',
-         'Highest Crime District': {'$first': '$_id.District'},
-         'Crimes': {'$first': '$count'},
-         'Lowest Crime District': {'$last': '$_id.District'},
-         'Crimes': {'$last': '$count'}
-        }
-    }
+    {'$limit': 10}
 ])
 
-print json.dumps(dist_crime2, indent=4)
+print json.dumps(per_day, indent=4)
 
