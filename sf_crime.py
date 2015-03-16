@@ -120,10 +120,6 @@ dist_crime = db.crimes.aggregate([
         }
     }
 ])
-"""
-
-start = datetime(2014, 1, 1, 00, 00, 00)
-end = datetime(2014, 12, 31, 23, 59, 00)
 
 per_day = db.crimes.aggregate([
     {'$match':
@@ -137,6 +133,26 @@ per_day = db.crimes.aggregate([
     {'$sort': {'count': -1}},
     {'$limit': 10}
 ])
+"""
 
-print json.dumps(per_day, indent=4)
+start = datetime(2011, 1, 1, 00, 00, 00)
+end = datetime(2011, 12, 31, 23, 59, 00)
+
+avg_crimes = db.crimes.aggregate([
+    {'$match':
+        {'Date': {'$gte': start, '$lte': end}}
+    },
+    {'$group':
+        {'_id': {'Day of Year': {'Date': {'$dayOfYear': '$Date'}}},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$group': 
+        {'_id': '',
+            'Avg Per Day': {'$avg': '$count'}
+        }
+    }
+])
+
+print json.dumps(avg_crimes, indent=4)
 
