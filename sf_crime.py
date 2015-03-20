@@ -167,7 +167,8 @@ total_year = db.crimes.aggregate([
         {'_id': 0,
             'Year': '$_id.Year',
             'Sum Per Year': '$Count',
-            'Avg Per Day': {'$divide': ['$Count', 365]}
+            'Avg Per Day': {'$divide': ['$Count', 365]},
+            'Avg Per Month': {'$divide': ['$Count', 12]},
         }
     },
     {'$sort': {'Sum Per Year': -1}}
