@@ -181,10 +181,7 @@ large_month = db.crimes.aggregate([
         {'Date': {'$gte': start, '$lte': end}}
     },
     {'$group':
-        {'_id': 
-        {'Year': {'$year': '$Date'},
-         'Month': {'$month': '$Date'},
-        },
+        {'_id': {'Year': {'$year': '$Date'}, 'Month': {'$month': '$Date'}},
          'Count': {'$sum': 1},
         }
     },
