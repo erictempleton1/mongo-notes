@@ -149,11 +149,8 @@ avg_crimes = db.crimes.aggregate([
         }
     }
 ])
-"""
 
-start = datetime(2003, 1, 1, 00, 00, 00)
-end = datetime(2014, 12, 31, 23, 59, 00)
-
+# match by date plus project extras
 total_year = db.crimes.aggregate([
     {'$match':
         {'Date': {'$gte': start, '$lte': end}}
@@ -173,6 +170,34 @@ total_year = db.crimes.aggregate([
     },
     {'$sort': {'Sum Per Year': -1}}
 ])
+"""
 
-print json.dumps(total_year, indent=4)
+start = datetime(2003, 1, 1, 00, 00, 00)
+end = datetime(2014, 12, 31, 23, 59, 00)
+
+# sort months desc by most crimes
+large_month = db.crimes.aggregate([
+    {'$match':
+        {'Date': {'$gte': start, '$lte': end}}
+    },
+    {'$group':
+        {'_id': 
+        {'Year': {'$year': '$Date'},
+         'Month': {'$month': '$Date'},
+        },
+         'Count': {'$sum': 1},
+        }
+    },
+    {'$sort': {'Count': -1}},
+    {'$limit': 10},
+    {'$project':
+        {'_id': 0,
+            'Year': '$_id.Year',
+            'Month': '$_id.Month',
+            'Crimes In Given Month': '$Count'
+        }
+    }
+])
+
+print json.dumps(large_month, indent=4)
 
