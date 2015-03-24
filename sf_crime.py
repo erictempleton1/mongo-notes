@@ -196,5 +196,10 @@ large_month = db.crimes.aggregate([
     }
 ])
 
+day_week = db.crimes.aggregate([
+    {'$match':
+        {'Date': {'$gte': start, '$lte': end}}
+    },
+
 print json.dumps(large_month, indent=4)
 
