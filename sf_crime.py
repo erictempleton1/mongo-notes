@@ -170,7 +170,6 @@ total_year = db.crimes.aggregate([
     },
     {'$sort': {'Sum Per Year': -1}}
 ])
-"""
 
 start = datetime(2003, 1, 1, 00, 00, 00)
 end = datetime(2014, 12, 31, 23, 59, 00)
@@ -195,11 +194,28 @@ large_month = db.crimes.aggregate([
         }
     }
 ])
+"""
+
+start = datetime(2003, 1, 1, 00, 00, 00)
+end = datetime(2014, 12, 31, 23, 59, 00)
 
 day_week = db.crimes.aggregate([
     {'$match':
         {'Date': {'$gte': start, '$lte': end}}
     },
+    {'$group':
+        {'_id': {'Year': {'$year': '$Date'}, 'Day of Week': '$DayOfWeek'},
+         'count': {'$sum': 1}
+        }
+    },
+    {'$sort': {'count': -1},
+    {'$group':
+        {'_id': 0,
+         'Highest Crime Day': {'$first': '$_id.Day of Week'},
+         'Year': {'$first': '$_id.Year'}
+        }
+    }
+])
 
-print json.dumps(large_month, indent=4)
+print json.dumps(day_week, indent=4)
 
