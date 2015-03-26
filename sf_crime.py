@@ -208,13 +208,8 @@ day_week = db.crimes.aggregate([
          'count': {'$sum': 1}
         }
     },
-    {'$sort': {'count': -1},
-    {'$group':
-        {'_id': 0,
-         'Highest Crime Day': {'$first': '$_id.Day of Week'},
-         'Year': {'$first': '$_id.Year'}
-        }
-    }
+    {'$limit': 5},
+    {'$sort': {'count': -1}}
 ])
 
 print json.dumps(day_week, indent=4)
